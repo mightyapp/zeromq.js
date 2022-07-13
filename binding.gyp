@@ -44,6 +44,7 @@
         'NAPI_VERSION=3',
         'NAPI_DISABLE_CPP_EXCEPTIONS',
         'ZMQ_STATIC',
+        'NOMINMAX', # https://github.com/microsoft/cppwinrt/issues/479#issuecomment-575334921
       ],
 
       'conditions': [

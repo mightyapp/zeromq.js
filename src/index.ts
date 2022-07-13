@@ -290,7 +290,7 @@ function asyncIterator<T extends SocketLikeIterable<U>, U>(this: T) {
       try {
         return {value: await this.receive(), done: false}
       } catch (err) {
-        if (this.closed && err.code === "EAGAIN") {
+        if (this.closed && (err as any).code === "EAGAIN") {
           /* Cast so we can omit 'value: undefined'. */
           return {done: true} as IteratorReturnResult<undefined>
         } else {
