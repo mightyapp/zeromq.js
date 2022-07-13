@@ -88,5 +88,8 @@
     "napi"
   ],
   "license": "MIT",
-  "author": "Rolf Timmermans <rolf@zxcv.nl>"
+  "author": "Rolf Timmermans <rolf@zxcv.nl>",
+  "publishConfig": {
+    "@mightyapp:registry": "https://npm.pkg.github.com"
+  }
 }
