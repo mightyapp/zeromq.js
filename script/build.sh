@@ -6,7 +6,7 @@ ZMQ_VERSION=${ZMQ_VERSION:-"4.3.3"}
 SRC_URL="https://github.com/zeromq/libzmq/releases/download/v${ZMQ_VERSION}/zeromq-${ZMQ_VERSION}.tar.gz"
 SRC_DIR="zeromq-${ZMQ_VERSION}"
 TARBALL="zeromq-${ZMQ_VERSION}.tar.gz"
-BUILD_OPTIONS=""
+BUILD_OPTIONS="-DWITH_LIBSODIUM=OFF"
 
 if [ -n "${WINDIR}" ]; then
   # Working directory is NAPI temporary build directory.
