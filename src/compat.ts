@@ -305,6 +305,7 @@ class Socket extends EventEmitter {
     }
 
     try {
+      console.log("receiving message...")
       if (this._recvQueue.length) {
         const msg = this._recvQueue.shift()!
         process.nextTick(() => this.emit("message", ...msg))
@@ -340,7 +341,7 @@ class Socket extends EventEmitter {
         if (cb) cb()
       } catch (err) {
         if (cb) {
-          cb((err as Error))
+          cb(err as Error)
         } else {
           this.emit("error", err)
         }

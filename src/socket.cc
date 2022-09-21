@@ -66,6 +66,7 @@ Socket::Socket(const Napi::CallbackInfo& info)
         Arg::Required<Arg::Number>("Socket type must be a number"),
         Arg::Optional<Arg::Object>("Options must be an object"),
     };
+    std::cout << "Socket constructed" << std::endl;
 
     if (args.ThrowIfInvalid(info)) return;
 
@@ -239,7 +240,10 @@ bool Socket::HasEvents(int32_t requested) const {
 
     while (zmq_getsockopt(socket, ZMQ_EVENTS, &events, &events_size) < 0) {
         /* Ignore errors. */
-        if (zmq_errno() != EINTR) return 0;
+        if (zmq_errno() != EINTR) {
+            std::cout << "zmq_getsockopt: " << zmq_errno() << std::endl;
+            return 0;
+        }
     }
 
     return events & requested;
@@ -302,6 +306,7 @@ void Socket::Receive(const Napi::Promise::Deferred& res) {
         IncomingMsg part;
         while (zmq_msg_recv(part, socket, ZMQ_DONTWAIT) < 0) {
             if (zmq_errno() != EINTR) {
+                std::cout << "Error trying to receive message from ZMQ socket " << std::to_string(zmq_errno()) << std::endl;
                 res.Reject(ErrnoException(Env(), zmq_errno()).Value());
                 return;
             }
@@ -457,7 +462,7 @@ void Socket::Disconnect(const Napi::CallbackInfo& info) {
     Arg::Validator args{
         Arg::Required<Arg::String>("Address must be a string"),
     };
-
+    std::cout << "Disconnecting socket.." << std::endl;
     if (args.ThrowIfInvalid(info)) return;
 
     if (!ValidateOpen()) return;
@@ -574,11 +579,18 @@ Napi::Value Socket::Send(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value Socket::Receive(const Napi::CallbackInfo& info) {
-    if (Arg::Validator{}.ThrowIfInvalid(info)) return Env().Undefined();
+    if (Arg::Validator{}.ThrowIfInvalid(info)) {
+        std::cout << "ThrowIfInvalid on Receive" << std::endl;
+        return Env().Undefined();
+    }
 
-    if (!ValidateOpen()) return Env().Undefined();
+    if (!ValidateOpen()) {
+        std::cout << "Receive: !ValidateOpen()" << std::endl;
+        return Env().Undefined();
+    }
 
     if (poller.Reading()) {
+        std::cout << "Receive: Socket is busy reading" << std::endl;
         ErrnoException(Env(), EBUSY,
             "Socket is busy reading; only one receive operation may be in "
             "progress at any time")
